@@ -7,21 +7,24 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(
-  method: string,
+export const apiRequest = async <T>(
   url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  const res = await fetch(url, {
-    method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+  options: RequestInit = {},
+): Promise<T> => {
+  const response = await fetch(url, {
+    ...options,
+    credentials: 'include', // This ensures cookies are sent with requests
+    headers: {
+      ...options.headers,
+      'Content-Type': 'application/json',
+    },
   });
-
-  await throwIfResNotOk(res);
-  return res;
-}
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText);
+  }
+  return response.json();
+};
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 export const getQueryFn: <T>(options: {

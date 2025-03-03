@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -8,6 +8,11 @@ import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+type LoginData = {
+  username: string;
+  password: string;
+};
+
 type AuthContextType = {
   user: SelectUser | null;
   isLoading: boolean;
@@ -16,6 +21,122 @@ type AuthContextType = {
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
 };
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { toast } = useToast();
+  const [error, setError] = useState<Error | null>(null);
+
+  const {
+    data: user,
+    isLoading,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: getQueryFn("/api/user"),
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (queryError) {
+      setError(queryError as Error);
+    }
+  }, [queryError]);
+
+  const loginMutation = useMutation({
+    mutationFn: (data: LoginData) =>
+      apiRequest<SelectUser>("/api/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["user"]);
+      toast({
+        title: "Přihlášení úspěšné",
+        description: "Byli jste úspěšně přihlášeni.",
+      });
+    },
+    onError: (error) => {
+      setError(error);
+      toast({
+        title: "Chyba přihlášení",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: () =>
+      apiRequest<void>("/api/logout", {
+        method: "POST",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["user"]);
+      toast({
+        title: "Odhlášení úspěšné",
+        description: "Byli jste úspěšně odhlášeni.",
+      });
+    },
+    onError: (error) => {
+      setError(error);
+      toast({
+        title: "Chyba odhlášení",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: (data: InsertUser) =>
+      apiRequest<SelectUser>("/api/register", {
+        method: "POST",
+        body: JSON.stringify(insertUserSchema.parse(data)),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["user"]);
+      toast({
+        title: "Registrace úspěšná",
+        description: "Byli jste úspěšně zaregistrováni.",
+      });
+    },
+    onError: (error) => {
+      setError(error);
+      toast({
+        title: "Chyba registrace",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user: user || null,
+        isLoading,
+        error,
+        loginMutation,
+        logoutMutation,
+        registerMutation,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
 
 type LoginData = Pick<InsertUser, "username" | "password">;
 

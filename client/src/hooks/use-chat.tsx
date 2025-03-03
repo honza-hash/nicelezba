@@ -1,69 +1,106 @@
-import { createContext, ReactNode, useContext } from "react";
+
+import React, { createContext, useContext, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Message } from "@shared/schema";
+import { v4 as uuidv4 } from "uuid";
+import { useAuth } from "./use-auth";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
 
-interface ChatContextType {
-  messages: Message[];
+type Message = {
+  id: number;
+  content: string;
+  modelId: string;
+  role: "user" | "assistant";
+  timestamp: string;
+};
+
+type SessionData = {
+  messageCount: number;
+};
+
+type ChatContextType = {
   isLoading: boolean;
-  sendMessage: (content: string, modelId: string) => void;
-  messageCount?: number;
-}
-
-interface ChatProviderProps {
-  children: ReactNode;
-  isAnonymous?: boolean;
-  sessionId?: string;
-}
+  messages: Message[];
+  sendMessage: (content: string, modelId: string) => Promise<void>;
+  sessionData: SessionData | null;
+};
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
-export function ChatProvider({ children, isAnonymous, sessionId }: ChatProviderProps) {
-  const { toast } = useToast();
+export function ChatProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  const [sessionId] = useState(() => localStorage.getItem("chatSessionId") || uuidv4());
+  
+  // Store session ID in local storage
+  React.useEffect(() => {
+    if (!localStorage.getItem("chatSessionId")) {
+      localStorage.setItem("chatSessionId", sessionId);
+    }
+  }, [sessionId]);
 
-  const messagesQueryKey = isAnonymous 
-    ? ["/api/anonymous/messages", sessionId]
-    : ["/api/messages"];
-
-  const { data: messages = [], isLoading } = useQuery<Message[]>({
-    queryKey: messagesQueryKey,
-  });
-
-  const sessionQuery = useQuery<{ messageCount: number }>({
-    queryKey: ["/api/anonymous/session", sessionId],
-    enabled: isAnonymous && !!sessionId,
-  });
-
-  const sendMessageMutation = useMutation({
-    mutationFn: async ({ content, modelId }: { content: string; modelId: string }) => {
-      const endpoint = isAnonymous ? `/api/anonymous/messages?sessionId=${sessionId}` : "/api/messages";
-      const res = await apiRequest("POST", endpoint, { content, modelId });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: messagesQueryKey });
-      if (isAnonymous) {
-        queryClient.invalidateQueries({ queryKey: ["/api/anonymous/session", sessionId] });
+  // Fetch session data
+  const { data: sessionData } = useQuery({
+    queryKey: ["sessionData", sessionId],
+    queryFn: async () => {
+      if (user) {
+        return { messageCount: 0 }; // For authenticated users, we don't use session count
+      } else {
+        return apiRequest<SessionData>(`/api/anonymous/session?sessionId=${sessionId}`);
       }
     },
-    onError: (error: Error) => {
-      toast({
-        title: "Failed to send message",
-        description: error.message,
-        variant: "destructive",
-      });
+    enabled: !!sessionId,
+    retry: false,
+  });
+
+  // Fetch messages
+  const { data: messages = [], isLoading } = useQuery({
+    queryKey: ["messages", user?.id, sessionId],
+    queryFn: async () => {
+      if (user) {
+        return apiRequest<Message[]>("/api/messages");
+      } else {
+        return apiRequest<Message[]>(`/api/anonymous/messages?sessionId=${sessionId}`);
+      }
+    },
+    enabled: !!sessionId || !!user,
+    retry: false,
+  });
+
+  // Send message mutation
+  const messageMutation = useMutation({
+    mutationFn: async (data: { content: string; modelId: string }) => {
+      if (user) {
+        return apiRequest<Message>("/api/messages", {
+          method: "POST",
+          body: JSON.stringify(data),
+        });
+      } else {
+        return apiRequest<Message>(`/api/anonymous/messages?sessionId=${sessionId}`, {
+          method: "POST",
+          body: JSON.stringify(data),
+        });
+      }
+    },
+    onSuccess: () => {
+      if (user) {
+        queryClient.invalidateQueries(["messages", user.id]);
+      } else {
+        queryClient.invalidateQueries(["messages", null, sessionId]);
+        queryClient.invalidateQueries(["sessionData", sessionId]);
+      }
     },
   });
+
+  const sendMessage = async (content: string, modelId: string) => {
+    await messageMutation.mutateAsync({ content, modelId });
+  };
 
   return (
     <ChatContext.Provider
       value={{
-        messages,
         isLoading,
-        messageCount: sessionQuery.data?.messageCount,
-        sendMessage: (content: string, modelId: string) =>
-          sendMessageMutation.mutate({ content, modelId }),
+        messages,
+        sendMessage,
+        sessionData: sessionData || { messageCount: 0 },
       }}
     >
       {children}

@@ -8,6 +8,7 @@ import AuthPage from "@/pages/auth-page";
 import ChatPage from "@/pages/chat-page";
 import AdminPage from "@/pages/admin-page";
 import { AuthProvider } from "@/hooks/use-auth";
+import { ChatProvider } from "@/hooks/use-chat";
 import { ProtectedRoute } from "./lib/protected-route";
 
 function Router() {
@@ -26,8 +27,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router />
-        <Toaster />
+        <ChatProvider>
+          <Router />
+          <Toaster />
+        </ChatProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
