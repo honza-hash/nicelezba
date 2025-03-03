@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
 import { useLocation } from "wouter";
 
-function ChatPageContent() {
-  const [selectedModel, setSelectedModel] = useState("gemini-free");
+export function ChatPageContent() {
+  const { isLoading, messages, sendMessage, sessionData } = useChat();
+  const messageCount = sessionData?.messageCount || 0;
+  const [selectedModel, setSelectedModel] = useState("gemini-pro");
   const [, setLocation] = useLocation();
-  const { messageCount } = useChat();
 
   return (
     <div className="min-h-screen flex flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
