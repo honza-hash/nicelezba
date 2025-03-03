@@ -7,11 +7,12 @@ import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema } from "@shared/schema";
-import { Redirect } from "wouter";
+import { Redirect, useLocation } from "wouter";
 import { SiGoogle } from "react-icons/si";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
+  const [, setLocation] = useLocation();
 
   const loginForm = useForm({
     resolver: zodResolver(insertUserSchema),
@@ -38,6 +39,15 @@ export default function AuthPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            <Button 
+              variant="outline" 
+              className="w-full mb-8 bg-primary/10 border-primary/20 hover:bg-primary/20"
+              onClick={() => setLocation("/chat")}
+            >
+              Vyzkoušet bez přihlášení
+              <span className="ml-2 text-xs text-muted-foreground">(70 zpráv zdarma)</span>
+            </Button>
+
             <Tabs defaultValue="login">
               <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="login">Přihlášení</TabsTrigger>

@@ -8,6 +8,10 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   isPro: boolean("is_pro").notNull().default(false),
   isAdmin: boolean("is_admin").notNull().default(false),
+  messageCount: integer("message_count").notNull().default(0),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const messages = pgTable("messages", {
@@ -17,6 +21,15 @@ export const messages = pgTable("messages", {
   modelId: text("model_id").notNull(),
   role: text("role").notNull(),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
+  sessionId: text("session_id"), // For anonymous users
+});
+
+// Anonymous sessions
+export const anonymousSessions = pgTable("anonymous_sessions", {
+  id: serial("id").primaryKey(),
+  sessionId: text("session_id").notNull().unique(),
+  messageCount: integer("message_count").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -25,7 +38,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
 });
 
 export const insertMessageSchema = createInsertSchema(messages);
+export const insertAnonymousSessionSchema = createInsertSchema(anonymousSessions);
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Message = typeof messages.$inferSelect;
+export type AnonymousSession = typeof anonymousSessions.$inferSelect;
