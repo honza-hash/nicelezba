@@ -1,0 +1,122 @@
+Perfektní, tady je full verze promptu, přímo ready pro Replit AI (nebo jakoukoliv jinou AI, co umí stavět aplikace). Všechno je tam a dal jsem tam i ten název + přepínání modelů pro PRO usery a že všechno jede na free tier:
+
+---
+
+## 📣 **Prompt pro Replit AI Agent (AI stavitele)**
+
+---
+
+🔧 **Název projektu:** **ai.ihos.eu - Nejlepší soukromé AI chat pro každého**  
+
+🚀 **Cíl projektu:**  
+Postav moderní, profi AI aplikaci jako fullstack projekt, který se bude jmenovat **ai.ihos.eu**. Cílem je nabídnout chat s AI modely, kde free uživatelé mají přístup k **Gemini Free** a PRO uživatelé (s placeným plánem za **5 EUR měsíčně**) mají možnost přepínat mezi více modely.
+
+### 📦 **Detailní požadavky:**
+
+---
+
+### ✅ **Frontend a UI:**
+- Moderní design inspirovaný https://chat.openai.com
+- Full responsive pro desktop, tablet i mobil
+- Light + Dark mode
+- Krásné chat bubbles, vlastní user avatars
+- Navbar s možností výběru modelu (pro PRO users)
+- Přehledné info o aktuálním modelu (název, rychlost, kvalita)
+
+---
+
+### ✅ **Backend & API:**
+- Postav jako serverless API (ideálně Node.js - Express nebo Fastify)
+- Full podpora **Google Gemini Free Tier** (text chat)
+- Připraveno na snadné přidání dalších modelů:
+    - Mistral (free API přes mistral.ai nebo together.ai)
+    - Hugging Face Inference API (free modely jako Open Llama)
+- PRO uživatelé mohou volit libovolný z modelů
+- Možnost logování všech requestů do DB pro statistiky
+
+---
+
+### ✅ **Databáze (Neon.tech):**
+- PostgreSQL na Neon.tech (free tier)
+- Ukládej:
+    - Historii všech zpráv (user_id, model, message, timestamp)
+    - Seznam uživatelů (email, heslo hash, billing status, created_at)
+    - Záznamy o platbách (amount, plan, payment date, status)
+
+---
+
+### ✅ **Billing (Profi platby):**
+- **Plán:** 5 EUR/měsíc za PRO
+- Platby přes Stripe nebo LemonSqueezy (dle dostupnosti ve free tieru)
+- Po zaplacení se v DB změní `billing_status` na `PRO` a odemkne se výběr modelů + neomezené zprávy
+
+---
+
+### ✅ **Autentizace:**
+- Přihlášení přes email+heslo (klasika)
+- Možnost přidat Sign-in přes Google
+- PRO status je navázaný na účet (email)
+
+---
+
+### ✅ **Přepínání modelů (PRO feature):**
+- Free user = jen Gemini Free
+- PRO user = výběr z:
+    - Gemini Pro (free tier)
+    - Mistral 7B (together.ai)
+    - OpenLLaMA (Hugging Face Free Inference API)
+- Vždy ukázat info o modelu (rychlost, kvalita odpovědí, náklady)
+
+---
+
+### ✅ **Admin panel:**
+- Pro mě jako majitele (admin přihlášení zvlášť)
+- Dashboard s přehledem:
+    - Počet userů
+    - Aktuální platby
+    - Statistika využití modelů
+    - Poslední zprávy všech userů (pro debug)
+- Možnost broadcast zprávy všem userům (announcement)
+
+---
+
+### ✅ **Optimalizace na deployment:**
+- Projekt musí být plně funkční na serverless platformách:
+    - Railway (Docker nebo direct service)
+    - Vercel (frontend separátně, backend jako serverless function)
+    - Render (direct service nebo Docker)
+- Minimalizuj náklady, využívej free tier kde to jde
+- Dodej `Dockerfile` a `README.md` s deploy postupem
+
+---
+
+### ✅ **Tech stack:**
+- Frontend: Next.js (React) + TailwindCSS
+- Backend: Node.js (Express nebo Fastify)
+- DB: Neon.tech PostgreSQL (free)
+- Auth: Auth.js nebo vlastní magic link systém
+- Billing: Stripe nebo LemonSqueezy
+- Hosting: optimalizováno pro Railway / Vercel / Render
+
+---
+
+### ✅ **Monitoring a statistiky:**
+- Sledování počtu zpráv, nejpoužívanější modely, průměrná doba odpovědi
+- Grafy v admin panelu (chart.js nebo echarts)
+
+---
+
+### ✅ **Extra:**
+- Branding a metadata:
+    - Title: "ai.ihos.eu - Nejlepší soukromé AI"
+    - Meta description: "Vlastní AI chat s přepínáním modelů. Vyber si Gemini, Mistral nebo OpenLlama a chatuj neomezeně!"
+    - Logo: Placeholder nebo jednoduché "AI" logo v tailwind stylu
+
+---
+
+📣 **Celý projekt musí být optimalizován na free tier všech použitých služeb.**  
+🎁 **Bonus:** Připrav možnost přidat další free modely do budoucna.
+
+---
+
+Tady máš přesně to, co má AI postavit. Dej mi vědět, jestli chceš rovnou i skeleton kódu nebo základní template, co se dá nahodit hned na Replit. Chceš? 😎
