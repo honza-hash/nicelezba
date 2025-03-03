@@ -4,7 +4,7 @@ import ws from "ws";
 import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
-neonConfig.wsProxy = (host) => `${host}`;
+neonConfig.wsProxy = (host) => `wss://${host}`;
 
 const connectionString = 'postgresql://neondb_owner:npg_SeOCYi5l8EVG@ep-red-sunset-a91km5cq-pooler.gwc.azure.neon.tech/neondb?sslmode=require';
 
