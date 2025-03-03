@@ -8,22 +8,52 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export const apiRequest = async <T>(
+  method: string = "GET",
   url: string,
-  options: RequestInit = {},
+  data?: any,
 ): Promise<T> => {
-  const response = await fetch(url, {
-    ...options,
+  const options: RequestInit = {
+    method,
     credentials: 'include', // This ensures cookies are sent with requests
     headers: {
-      ...options.headers,
       'Content-Type': 'application/json',
-    },
-  });
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText);
+    }
+  };
+  
+  if (data) {
+    options.body = JSON.stringify(data);
   }
-  return response.json();
+  
+  const response = await fetch(url, options);
+  
+  const contentType = response.headers.get("content-type");
+  
+  if (!response.ok) {
+    let errorMessage = response.statusText;
+    try {
+      // Only try to parse as JSON if the content type includes 'json'
+      if (contentType && contentType.includes("application/json")) {
+        const errorJson = await response.json();
+        errorMessage = errorJson.message || JSON.stringify(errorJson);
+      } else {
+        errorMessage = await response.text();
+        // If it starts with HTML, use a more user-friendly message
+        if (errorMessage.startsWith('<!DOCTYPE') || errorMessage.startsWith('<html')) {
+          errorMessage = `Server error (${response.status})`;
+        }
+      }
+    } catch (e) {
+      errorMessage = `Failed to parse error response (${response.status})`;
+    }
+    throw new Error(errorMessage);
+  }
+  
+  // Only try to parse as JSON if the content type includes 'json'
+  if (contentType && contentType.includes("application/json")) {
+    return response.json();
+  }
+  
+  throw new Error("Response is not JSON");
 };
 
 type UnauthorizedBehavior = "returnNull" | "throw";

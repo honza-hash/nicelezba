@@ -44,7 +44,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       if (user) {
         return { messageCount: 0 }; // For authenticated users, we don't use session count
       } else {
-        return apiRequest<SessionData>(`/api/anonymous/session?sessionId=${sessionId}`);
+        return apiRequest<SessionData>("GET", `/api/anonymous/session?sessionId=${sessionId}`);
       }
     },
     enabled: !!sessionId,
@@ -56,9 +56,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     queryKey: ["messages", user?.id, sessionId],
     queryFn: async () => {
       if (user) {
-        return apiRequest<Message[]>("/api/messages");
+        return apiRequest<Message[]>("GET", "/api/messages");
       } else {
-        return apiRequest<Message[]>(`/api/anonymous/messages?sessionId=${sessionId}`);
+        return apiRequest<Message[]>("GET", `/api/anonymous/messages?sessionId=${sessionId}`);
       }
     },
     enabled: !!sessionId || !!user,
