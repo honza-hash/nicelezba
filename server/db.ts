@@ -4,6 +4,7 @@ import ws from "ws";
 import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
+// Properly format the WebSocket proxy URL
 neonConfig.wsProxy = (host) => `wss://${host}`;
 
 export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
