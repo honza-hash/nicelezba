@@ -40,7 +40,13 @@ function ChatPageContent() {
       </header>
 
       <main className="flex-1 flex flex-col container mx-auto px-4">
-        <ChatWindow />
+        <div className="flex flex-col h-full"> {/*Added div to encompass chat and billing */}
+          <ChatWindow />
+          <div className="mt-4"> {/* Placeholder for billing info */}
+            <p>Messages Used: {messageCount || 0}</p>  {/* Placeholder billing info */}
+            {/* Add more detailed billing information here as needed */}
+          </div>
+        </div>
         <MessageInput selectedModel={selectedModel} />
       </main>
     </div>
@@ -48,14 +54,14 @@ function ChatPageContent() {
 }
 
 export default function ChatPage() {
-  const [sessionId] = useState(() => localStorage.getItem("anonymousSessionId") || nanoid());
+  const [sessionId] = useState(() => nanoid());
 
   useEffect(() => {
     localStorage.setItem("anonymousSessionId", sessionId);
   }, [sessionId]);
 
   return (
-    <ChatProvider isAnonymous sessionId={sessionId}>
+    <ChatProvider isAnonymous={true} sessionId={sessionId}>
       <ChatPageContent />
     </ChatProvider>
   );
