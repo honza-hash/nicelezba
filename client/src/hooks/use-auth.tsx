@@ -81,6 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  // Po úspěšném přihlášení nebo registraci, okamžitě znovu načtěte informace o uživateli
+  React.useEffect(() => {
+    if (loginMutation.isSuccess || registerMutation.isSuccess) {
+      queryClient.invalidateQueries(["/api/user"]);
+    }
+  }, [loginMutation.isSuccess, registerMutation.isSuccess]);
+
   return (
     <AuthContext.Provider
       value={{
