@@ -7,14 +7,14 @@ import { MessageInput } from "@/components/chat/message-input";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
 import { useLocation } from "wouter";
-import { useToast } from "@/hooks/use-toast";
+import { useChat } from "@/hooks/use-chat";
 
 export default function ChatPage() {
   const [selectedModel, setSelectedModel] = useState("gemini-free");
   const [sessionId] = useState(() => localStorage.getItem("anonymousSessionId") || nanoid());
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
-  
+  const { messageCount } = useChat();
+
   useEffect(() => {
     localStorage.setItem("anonymousSessionId", sessionId);
   }, [sessionId]);
@@ -33,7 +33,7 @@ export default function ChatPage() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">
-                Anonymní režim (zbývá zpráv: {70 - messageCount})
+                Anonymní režim (zbývá zpráv: {70 - (messageCount || 0)})
               </span>
               <Button
                 variant="ghost"
