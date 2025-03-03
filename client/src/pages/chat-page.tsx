@@ -9,7 +9,7 @@ import { LogIn } from "lucide-react";
 import { useLocation } from "wouter";
 
 export function ChatPageContent() {
-  const { isLoading, messages, sendMessage, sessionData } = useChat();
+  const { isLoading, messages, sendMessage, sessionData } = useChat?.() || { isLoading: true, messages: [], sessionData: { messageCount: 0 } };
   const messageCount = sessionData?.messageCount || 0;
   const [selectedModel, setSelectedModel] = useState("gemini-pro");
   const [, setLocation] = useLocation();
