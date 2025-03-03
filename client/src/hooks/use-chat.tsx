@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
@@ -29,7 +28,7 @@ const ChatContext = createContext<ChatContextType | null>(null);
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [sessionId] = useState(() => localStorage.getItem("chatSessionId") || uuidv4());
-  
+
   // Store session ID in local storage
   React.useEffect(() => {
     if (!localStorage.getItem("chatSessionId")) {
@@ -69,13 +68,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const messageMutation = useMutation({
     mutationFn: async (data: { content: string; modelId: string }) => {
       if (user) {
-        return apiRequest<Message>("/api/messages", {
-          method: "POST",
+        return apiRequest<Message>("POST", "/api/messages", {
           body: JSON.stringify(data),
         });
       } else {
-        return apiRequest<Message>(`/api/anonymous/messages?sessionId=${sessionId}`, {
-          method: "POST",
+        return apiRequest<Message>("POST", `/api/anonymous/messages?sessionId=${sessionId}`, {
           body: JSON.stringify(data),
         });
       }
