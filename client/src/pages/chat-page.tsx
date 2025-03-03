@@ -11,7 +11,7 @@ import { useLocation } from "wouter";
 export function ChatPageContent() {
   const { isLoading, messages, sendMessage, sessionData } = useChat?.() || { isLoading: true, messages: [], sessionData: { messageCount: 0 } };
   const messageCount = sessionData?.messageCount || 0;
-  const [selectedModel, setSelectedModel] = useState("gemini-pro");
+  const [selectedModel, setSelectedModel] = useState("gemini-1.5-pro");
   const [, setLocation] = useLocation();
 
   return (

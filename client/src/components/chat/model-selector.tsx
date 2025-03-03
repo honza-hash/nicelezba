@@ -11,8 +11,8 @@ import { Badge } from "@/components/ui/badge";
 
 const models = [
   { 
-    id: "gemini-free", 
-    name: "Gemini", 
+    id: "gemini-1.5-pro", 
+    name: "Gemini 1.5 Pro", 
     description: "Rychlý a efektivní model od Google",
     apiUrl: "https://makersuite.google.com/app/apikey",
     isPro: false 

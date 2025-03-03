@@ -94,7 +94,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         text = response.data.choices[0].message.content;
       } else {
         // Use Gemini for other models
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
         const result = await model.generateContent(data.content);
         const response = result.response;
         text = response.text();
@@ -171,7 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         text = response.data.choices[0].message.content;
       } else {
         // Use Gemini for other models
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
         const result = await model.generateContent(data.content);
         const response = result.response;
         text = response.text();

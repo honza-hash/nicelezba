@@ -9,7 +9,7 @@ import { LogOut, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function HomePage() {
-  const [selectedModel, setSelectedModel] = useState("gemini-free");
+  const [selectedModel, setSelectedModel] = useState("gemini-1.5-pro");
   const { user, logoutMutation } = useAuth();
 
   return (
