@@ -67,13 +67,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // Send message mutation
   const messageMutation = useMutation({
     mutationFn: async (data: { content: string; modelId: string }) => {
+      // Ensure data has all required fields
+      const messageData = {
+        content: data.content,
+        modelId: data.modelId,
+        role: "user"
+      };
+      
       if (user) {
         return apiRequest<Message>("POST", "/api/messages", {
-          body: JSON.stringify(data),
+          body: JSON.stringify(messageData),
         });
       } else {
         return apiRequest<Message>("POST", `/api/anonymous/messages?sessionId=${sessionId}`, {
-          body: JSON.stringify(data),
+          body: JSON.stringify(messageData),
         });
       }
     },

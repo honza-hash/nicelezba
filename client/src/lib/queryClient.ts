@@ -7,27 +7,30 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export const apiRequest = async <T>(
-  method: string = "GET",
+export async function apiRequest<T>(
+  method: string,
   url: string,
-  data?: any,
-): Promise<T> => {
-  const options: RequestInit = {
-    method,
-    credentials: 'include', // This ensures cookies are sent with requests
-    headers: {
-      'Content-Type': 'application/json',
-    }
+  options: RequestInit = {}
+): Promise<T> {
+  const defaultHeaders = {
+    "Content-Type": "application/json",
   };
-  
-  if (data) {
-    options.body = JSON.stringify(data);
-  }
-  
-  const response = await fetch(url, options);
-  
+
+  const mergedOptions = {
+    method,
+    headers: {
+      ...defaultHeaders,
+      ...options.headers,
+    },
+    credentials: "include" as RequestCredentials,
+    ...options,
+  };
+
+  console.log(`Making ${method} request to ${url} with data:`, options.body);
+  const response = await fetch(url, mergedOptions);
+
   const contentType = response.headers.get("content-type");
-  
+
   if (!response.ok) {
     let errorMessage = response.statusText;
     try {
@@ -47,12 +50,12 @@ export const apiRequest = async <T>(
     }
     throw new Error(errorMessage);
   }
-  
+
   // Only try to parse as JSON if the content type includes 'json'
   if (contentType && contentType.includes("application/json")) {
     return response.json();
   }
-  
+
   throw new Error("Response is not JSON");
 };
 
