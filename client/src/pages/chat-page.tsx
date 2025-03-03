@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
-import { ChatProvider } from "@/hooks/use-chat";
+import { ChatProvider, useChat } from "@/hooks/use-chat";
 import { ChatWindow } from "@/components/chat/chat-window";
 import { ModelSelector } from "@/components/chat/model-selector";
 import { MessageInput } from "@/components/chat/message-input";
@@ -11,6 +11,7 @@ import { useLocation } from "wouter";
 function ChatPageContent() {
   const [selectedModel, setSelectedModel] = useState("gemini-free");
   const [, setLocation] = useLocation();
+  const { messageCount } = useChat();
 
   return (
     <div className="min-h-screen flex flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
@@ -24,6 +25,9 @@ function ChatPageContent() {
             />
           </div>
           <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">
+              Anonymní režim (zbývá zpráv: {70 - (messageCount || 0)})
+            </span>
             <Button
               variant="ghost"
               size="icon"
