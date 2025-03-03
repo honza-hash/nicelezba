@@ -40,11 +40,10 @@ function ChatPageContent() {
       </header>
 
       <main className="flex-1 flex flex-col container mx-auto px-4">
-        <div className="flex flex-col h-full"> {/*Added div to encompass chat and billing */}
+        <div className="flex flex-col h-full">
           <ChatWindow />
-          <div className="mt-4"> {/* Placeholder for billing info */}
-            <p>Messages Used: {messageCount || 0}</p>  {/* Placeholder billing info */}
-            {/* Add more detailed billing information here as needed */}
+          <div className="mt-4">
+            <p>Messages Used: {messageCount || 0}</p>
           </div>
         </div>
         <MessageInput selectedModel={selectedModel} />

@@ -51,7 +51,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(404).json({ error: "Session not found" });
     }
 
-    if (session.messageCount >= 70) {
+    // Effectively remove message limit for anonymous users (set to very high)
+    if (session.messageCount >= 10000) {
       return res.status(403).json({ error: "Message limit reached" });
     }
 

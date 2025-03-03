@@ -21,28 +21,28 @@ const models = [
     name: "Mistral 7B", 
     description: "Open-source model s výborným poměrem výkon/velikost",
     apiUrl: "https://mistral.ai/",
-    isPro: true 
+    isPro: false 
   },
   { 
     id: "claude-3", 
     name: "Claude 3", 
     description: "Pokročilý model od Anthropic",
     apiUrl: "https://www.anthropic.com/claude",
-    isPro: true 
+    isPro: false 
   },
   { 
     id: "llama-2", 
     name: "LLaMA 2", 
     description: "Výkonný open-source model od Meta",
     apiUrl: "https://ai.meta.com/llama/",
-    isPro: true
+    isPro: false
   },
   {
     id: "deepseek-r1-distil-llama-70b",
     name: "DeepSeek R1 Distil Llama 70B",
     description: "Vysoce výkonný open-source model, optimalizovaný pro efektivitu",
     apiUrl: "https://openrouter.ai/", // Placeholder API URL
-    isPro: true
+    isPro: false
   },
 ];
 
@@ -54,9 +54,8 @@ interface ModelSelectorProps {
 export function ModelSelector({ value, onValueChange }: ModelSelectorProps) {
   const { user } = useAuth();
 
-  const availableModels = models.filter(
-    (model) => !model.isPro || user?.isPro
-  );
+  // All models are available to all users
+  const availableModels = models;
 
   return (
     <Select value={value} onValueChange={onValueChange}>
