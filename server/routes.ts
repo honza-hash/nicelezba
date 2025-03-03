@@ -64,16 +64,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     let text = "";
 
     try {
-      if (data.modelId === "deepseek-r1-distil-llama-70b") {
-        // Use OpenRouter API for DeepSeek model
+      if (data.modelId.includes("openrouter/") || data.modelId === "deepseek-r1-distil-llama-70b") {
+        // Use OpenRouter API for OpenRouter models
         if (!process.env.OPENROUTER_API_KEY) {
           throw new Error("OPENROUTER_API_KEY not configured");
+        }
+
+        // Set the correct model ID
+        let modelId = data.modelId;
+        if (data.modelId === "deepseek-r1-distil-llama-70b") {
+          modelId = "deepseek/deepseek-r1-distill-llama-70b-free";
         }
 
         const response = await axios.post(
           "https://openrouter.ai/api/v1/chat/completions",
           {
-            model: "deepseek/deepseek-r1-distill-llama-70b-free",
+            model: modelId,
             messages: [{ role: "user", content: data.content }]
           },
           {
@@ -135,16 +141,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     let text = "";
 
     try {
-      if (data.modelId === "deepseek-r1-distil-llama-70b") {
-        // Use OpenRouter API for DeepSeek model
+      if (data.modelId.includes("openrouter/") || data.modelId === "deepseek-r1-distil-llama-70b") {
+        // Use OpenRouter API for OpenRouter models
         if (!process.env.OPENROUTER_API_KEY) {
           throw new Error("OPENROUTER_API_KEY not configured");
+        }
+
+        // Set the correct model ID
+        let modelId = data.modelId;
+        if (data.modelId === "deepseek-r1-distil-llama-70b") {
+          modelId = "deepseek/deepseek-r1-distill-llama-70b-free";
         }
 
         const response = await axios.post(
           "https://openrouter.ai/api/v1/chat/completions",
           {
-            model: "deepseek/deepseek-r1-distill-llama-70b-free",
+            model: modelId,
             messages: [{ role: "user", content: data.content }]
           },
           {

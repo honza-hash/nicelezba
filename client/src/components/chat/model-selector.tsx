@@ -1,3 +1,4 @@
+
 import {
   Select,
   SelectContent,
@@ -16,32 +17,25 @@ const models = [
     apiUrl: "https://makersuite.google.com/app/apikey",
     isPro: false 
   },
-  { 
-    id: "mistral-7b", 
-    name: "Mistral 7B", 
-    description: "Open-source model s výborným poměrem výkon/velikost",
-    apiUrl: "https://mistral.ai/",
-    isPro: false 
-  },
-  { 
-    id: "claude-3", 
-    name: "Claude 3", 
-    description: "Pokročilý model od Anthropic",
-    apiUrl: "https://www.anthropic.com/claude",
-    isPro: false 
-  },
-  { 
-    id: "llama-2", 
-    name: "LLaMA 2", 
-    description: "Výkonný open-source model od Meta",
-    apiUrl: "https://ai.meta.com/llama/",
-    isPro: false
-  },
   {
     id: "deepseek-r1-distil-llama-70b",
     name: "DeepSeek R1 Distil Llama 70B",
     description: "Vysoce výkonný open-source model, optimalizovaný pro efektivitu",
-    apiUrl: "https://openrouter.ai/", // Placeholder API URL
+    apiUrl: "https://openrouter.ai/",
+    isPro: false
+  },
+  { 
+    id: "openrouter/mistralai/mistral-7b-instruct:free", 
+    name: "Mistral 7B", 
+    description: "Open-source model s výborným poměrem výkon/velikost",
+    apiUrl: "https://openrouter.ai/",
+    isPro: false 
+  },
+  { 
+    id: "openrouter/meta-llama/llama-3-8b-instruct:free", 
+    name: "Llama 3 8B", 
+    description: "Nejnovější open-source model od Meta",
+    apiUrl: "https://openrouter.ai/",
     isPro: false
   },
 ];
