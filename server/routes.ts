@@ -64,17 +64,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     let text = "";
 
     try {
-      // Check if trying to use OpenRouter but it's not configured
-      if ((data.modelId.includes("openrouter/") || data.modelId === "deepseek-r1-distil-llama-70b") && !process.env.OPENROUTER_API_KEY) {
-        console.log(`OpenRouter API key not configured. Falling back to Gemini for model: ${data.modelId}`);
-        // Fall back to Gemini if OpenRouter is not configured
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-        const result = await model.generateContent(data.content);
-        const response = result.response;
-        text = response.text();
-      } 
-      else if (data.modelId.includes("openrouter/") || data.modelId === "deepseek-r1-distil-llama-70b") {
-        // Use OpenRouter API for OpenRouter models when configured
+      if (data.modelId.includes("openrouter/") || data.modelId === "deepseek-r1-distil-llama-70b") {
+        // Use OpenRouter API for OpenRouter models
+        if (!process.env.OPENROUTER_API_KEY) {
+          throw new Error("OPENROUTER_API_KEY not configured");
+        }
+
         // Set the correct model ID
         let modelId = data.modelId;
         if (data.modelId === "deepseek-r1-distil-llama-70b") {
@@ -146,17 +141,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     let text = "";
 
     try {
-      // Check if trying to use OpenRouter but it's not configured
-      if ((data.modelId.includes("openrouter/") || data.modelId === "deepseek-r1-distil-llama-70b") && !process.env.OPENROUTER_API_KEY) {
-        console.log(`OpenRouter API key not configured. Falling back to Gemini for model: ${data.modelId}`);
-        // Fall back to Gemini if OpenRouter is not configured
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-        const result = await model.generateContent(data.content);
-        const response = result.response;
-        text = response.text();
-      } 
-      else if (data.modelId.includes("openrouter/") || data.modelId === "deepseek-r1-distil-llama-70b") {
-        // Use OpenRouter API for OpenRouter models when configured
+      if (data.modelId.includes("openrouter/") || data.modelId === "deepseek-r1-distil-llama-70b") {
+        // Use OpenRouter API for OpenRouter models
+        if (!process.env.OPENROUTER_API_KEY) {
+          throw new Error("OPENROUTER_API_KEY not configured");
+        }
+
         // Set the correct model ID
         let modelId = data.modelId;
         if (data.modelId === "deepseek-r1-distil-llama-70b") {

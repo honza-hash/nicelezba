@@ -18,25 +18,25 @@ const models = [
     isPro: false 
   },
   {
-    id: "gemini-1.5-pro",
-    name: "DeepSeek R1 Distil Llama 70B (Gemini Fallback)",
-    description: "OpenRouter temporarily unavailable - using Gemini as fallback",
-    apiUrl: "https://makersuite.google.com/app/apikey",
+    id: "deepseek-r1-distil-llama-70b",
+    name: "DeepSeek R1 Distil Llama 70B",
+    description: "Vysoce výkonný open-source model, optimalizovaný pro efektivitu",
+    apiUrl: "https://openrouter.ai/",
     isPro: false
   },
   { 
-    id: "gemini-1.5-pro", 
-    name: "Mistral 7B (Gemini Fallback)", 
-    description: "OpenRouter temporarily unavailable - using Gemini as fallback",
-    apiUrl: "https://makersuite.google.com/app/apikey",
+    id: "openrouter/mistralai/mistral-7b-instruct:free", 
+    name: "Mistral 7B", 
+    description: "Open-source model s výborným poměrem výkon/velikost",
+    apiUrl: "https://openrouter.ai/",
     isPro: false 
   },
   { 
-    id: "gemini-1.5-pro", 
-    name: "Llama 3 8B (Gemini Fallback)", 
-    description: "OpenRouter temporarily unavailable - using Gemini as fallback",
-    apiUrl: "https://makersuite.google.com/app/apikey",
-    isPro: falsealse
+    id: "openrouter/meta-llama/llama-3-8b-instruct:free", 
+    name: "Llama 3 8B", 
+    description: "Nejnovější open-source model od Meta",
+    apiUrl: "https://openrouter.ai/",
+    isPro: false
   },
 ];
 
