@@ -53,7 +53,11 @@ function ChatPageContent() {
 }
 
 export default function ChatPage() {
-  const [sessionId] = useState(() => nanoid());
+  const [sessionId] = useState(() => {
+    // Try to get existing session ID from localStorage or create a new one
+    const existingId = localStorage.getItem("anonymousSessionId");
+    return existingId || nanoid();
+  });
 
   useEffect(() => {
     localStorage.setItem("anonymousSessionId", sessionId);
