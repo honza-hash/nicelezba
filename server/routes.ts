@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { insertMessageSchema } from "@shared/schema";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import axios from "axios";
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("GEMINI_API_KEY environment variable is required");
@@ -59,33 +60,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
       sessionId,
     });
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    let text = "";
 
     try {
-      const result = await model.generateContent(data.content);
-      const response = result.response;
-      const text = response.text();
+      if (data.modelId === "deepseek-r1-distil-llama-70b") {
+        // Use OpenRouter API for DeepSeek model
+        if (!process.env.OPENROUTER_API_KEY) {
+          throw new Error("OPENROUTER_API_KEY not configured");
+        }
 
-      // Store user message
-      await storage.createMessage({
-        ...data,
-        role: "user"
-      });
+        const response = await axios.post(
+          "https://openrouter.ai/api/v1/chat/completions",
+          {
+            model: "deepseek/deepseek-r1-distill-llama-70b-free",
+            messages: [{ role: "user", content: data.content }]
+          },
+          {
+            headers: {
+              "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+              "HTTP-Referer": "https://replit.com",
+              "X-Title": "AI Chat Application"
+            }
+          }
+        );
 
-      // Store AI response
-      const aiMessage = await storage.createMessage({
-        sessionId,
-        content: text,
-        modelId: data.modelId,
-        role: "assistant"
-      });
-
-      await storage.incrementAnonymousMessageCount(sessionId);
-
-      res.json(aiMessage);
+        text = response.data.choices[0].message.content;
+      } else {
+        // Use Gemini for other models
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const result = await model.generateContent(data.content);
+        const response = result.response;
+        text = response.text();
+      }
     } catch (error) {
-      res.status(500).json({ error: "Failed to generate response" });
+      console.error("Error generating response:", error);
+      return res.status(500).json({ error: "Failed to generate response" });
     }
+
+    // Store user message
+    await storage.createMessage({
+      ...data,
+      role: "user"
+    });
+
+    // Store AI response
+    const aiMessage = await storage.createMessage({
+      sessionId,
+      content: text,
+      modelId: data.modelId,
+      role: "assistant"
+    });
+
+    await storage.incrementAnonymousMessageCount(sessionId);
+
+    res.json(aiMessage);
   });
 
   // Authenticated routes
@@ -103,31 +131,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
       userId: req.user.id,
     });
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    let text = "";
 
     try {
-      const result = await model.generateContent(data.content);
-      const response = result.response;
-      const text = response.text();
+      if (data.modelId === "deepseek-r1-distil-llama-70b") {
+        // Use OpenRouter API for DeepSeek model
+        if (!process.env.OPENROUTER_API_KEY) {
+          throw new Error("OPENROUTER_API_KEY not configured");
+        }
 
-      // Store user message
-      await storage.createMessage({
-        ...data,
-        role: "user"
-      });
+        const response = await axios.post(
+          "https://openrouter.ai/api/v1/chat/completions",
+          {
+            model: "deepseek/deepseek-r1-distill-llama-70b-free",
+            messages: [{ role: "user", content: data.content }]
+          },
+          {
+            headers: {
+              "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+              "HTTP-Referer": "https://replit.com",
+              "X-Title": "AI Chat Application"
+            }
+          }
+        );
 
-      // Store AI response
-      const aiMessage = await storage.createMessage({
-        userId: req.user.id,
-        content: text,
-        modelId: data.modelId,
-        role: "assistant"
-      });
-
-      res.json(aiMessage);
+        text = response.data.choices[0].message.content;
+      } else {
+        // Use Gemini for other models
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const result = await model.generateContent(data.content);
+        const response = result.response;
+        text = response.text();
+      }
     } catch (error) {
-      res.status(500).json({ error: "Failed to generate response" });
+      console.error("Error generating response:", error);
+      return res.status(500).json({ error: "Failed to generate response" });
     }
+
+    // Store user message
+    await storage.createMessage({
+      ...data,
+      role: "user"
+    });
+
+    // Store AI response
+    const aiMessage = await storage.createMessage({
+      userId: req.user.id,
+      content: text,
+      modelId: data.modelId,
+      role: "assistant"
+    });
+
+    res.json(aiMessage);
   });
 
   app.get("/api/admin/stats", async (req, res) => {

@@ -35,7 +35,14 @@ const models = [
     name: "LLaMA 2", 
     description: "Výkonný open-source model od Meta",
     apiUrl: "https://ai.meta.com/llama/",
-    isPro: true 
+    isPro: true
+  },
+  {
+    id: "deepseek-r1-distil-llama-70b",
+    name: "DeepSeek R1 Distil Llama 70B",
+    description: "Vysoce výkonný open-source model, optimalizovaný pro efektivitu",
+    apiUrl: "https://openrouter.ai/", // Placeholder API URL
+    isPro: true
   },
 ];
 
